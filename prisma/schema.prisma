@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model DP_L_Feiertage {
+  datum    DateTime? @db.Date
+  Feiertag String?   @db.VarChar(50)
+  cat      Int?      @db.SmallInt
+  id       Int       @id @default(autoincrement())
+}
+
+model DP_L_Job {
+  job_id           Int                @id @default(autoincrement())
+  minijob          Int?               @db.TinyInt
+  fest             Int?               @db.TinyInt
+  student          Int?               @db.TinyInt
+  gleitzone        Int?               @db.TinyInt
+  DP_T_Mitarbeiter DP_T_Mitarbeiter[]
+}
+
+model DP_L_Location {
+  id   Int     @id
+  name String? @db.VarChar(200)
+}
+
+model DP_T_Lohnform {
+  id               Int                @id @default(autoincrement())
+  MaxLohn          Decimal?           @default(0.00) @db.Decimal(8, 2)
+  Stundenlohn      Decimal?           @default(0.00) @db.Decimal(6, 2)
+  Festlohn         Decimal?           @default(0.00) @db.Decimal(8, 2)
+  zu_nacht1        Int?               @db.TinyInt
+  zu_nacht2        Int?               @db.TinyInt
+  zu_sonntag       Int?               @db.TinyInt
+  zu_feiertag      Int?               @db.TinyInt
+  MaxStunden       Int?               @default(0)
+  DP_T_Mitarbeiter DP_T_Mitarbeiter[]
+}
+
+model DP_T_Mitarbeiter {
+  id                   Int            @id @default(autoincrement())
+  Name                 String?        @default("NULL") @db.VarChar(40)
+  Vorname              String?        @default("NULL") @db.VarChar(40)
+  Strasse              String?        @db.VarChar(50)
+  PLZ                  String?        @db.VarChar(6)
+  Ort                  String?        @db.VarChar(50)
+  Geburtsdatum         DateTime?      @db.DateTime(0)
+  Staatsangehoerigkeit String?        @db.VarChar(40)
+  Betrieb              String?        @db.VarChar(25)
+  farbe                String?        @db.VarChar(20)
+  fkJobsID             Int?
+  fkLohnartID          Int?
+  DP_L_Job             DP_L_Job?      @relation(fields: [fkJobsID], references: [job_id])
+  DP_T_Lohnform        DP_T_Lohnform? @relation(fields: [fkLohnartID], references: [id])
+  DP_T_Plan            DP_T_Plan[]
+
+  @@index([fkJobsID], name: "fkJobsID")
+  @@index([fkLohnartID], name: "fkLohnartID")
+}
+
+model DP_T_Plan {
+  id               Int               @id @default(autoincrement())
+  starttime        DateTime?         @db.DateTime(0)
+  endtime          DateTime?         @db.DateTime(0)
+  name             String?           @db.VarChar(50)
+  stamm_id         Int?
+  Stunden          Decimal?          @db.Decimal(5, 2)
+  location_id      Int?
+  DP_T_Mitarbeiter DP_T_Mitarbeiter? @relation(fields: [stamm_id], references: [id])
+
+  @@index([location_id], name: "FK_DP_T_PLAN_FK1")
+  @@index([stamm_id], name: "stamm_id")
+}

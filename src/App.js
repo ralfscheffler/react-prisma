@@ -1,24 +1,38 @@
-import logo from './logo.svg';
+
 import './App.css';
+import Navbar from './Navbar';
+import {BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import Personalform from './Personalform';
+import Shiftplan from './Shiftplan';
+import Reports from './Reports';
+import Einstellungen from './Einstellungen';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
+    <Router>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <Navbar/> 
+        <div className='content'>
+          <Switch>
+            <Route exact path='/Personalform'>
+              <Personalform/>
+            </Route>
+            <Route path='/Shiftplan'>
+              <Shiftplan/>
+            </Route> 
+            <Route exact path='/Reports'>
+              <Reports/>
+            </Route> 
+            <Route path='/Einstellungen'>
+              <Einstellungen/>
+            </Route> 
+          </Switch>  
+          
+        </div>
+      
     </div>
+    </Router>
   );
 }
 
